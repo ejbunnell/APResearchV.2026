@@ -49,7 +49,7 @@ void Robot::TeleopPeriodic()
 	if (tractionControl)
 	{
 		double slipRatio = m_container.realOdometry.CalculateSlipRatio(m_container.drivetrain.GetAverageOmega());
-		frc::Translation2d offset{slipRatio * m_container.drivetrain.GetAverageOmega() / 1_rad * TunerConstants::kWheelRadius * GetPeriod(), 0_m};
+		frc::Translation2d offset{slipRatio * m_container.drivetrain.GetAverageOmega() / 1_rad * 1.875_in * GetPeriod(), 0_m};
 		m_container.drivetrain.ResetTranslation(m_container.drivetrain.GetState().Pose.Translation() - offset);
 	}
 }

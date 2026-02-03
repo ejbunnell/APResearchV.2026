@@ -8,7 +8,6 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include "subsystems/CommandSwerveDrivetrain.h"
 #include "subsystems/RealOdometry.h"
-#include "TorqueControl.h"
 #include "DutyCycleControl.h"
 #include "Telemetry.h"
 
@@ -24,8 +23,7 @@ private:
                                                .WithRotationalDeadband(MaxAngularRate * 0.15)                    // Add a 15% deadband
                                                .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage); // Use open-loop control for drive motors
 
-    swerve::requests::TorqueControl torqueControl;
-    swerve::requests::DutyCycleControl dutyCycleControl;
+    DutyCycleControl dutyCycleControl{};
 
     frc2::CommandXboxController joystick{0};
 

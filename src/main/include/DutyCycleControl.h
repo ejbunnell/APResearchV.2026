@@ -4,33 +4,27 @@
 #include <ctre/phoenix6/swerve/impl/SwerveDrivetrainImpl.hpp>
 #include <ctre/phoenix6/TalonFX.hpp>
 
-using namespace ctre::phoenix6;
-using namespace swerve;
-using namespace requests;
-namespace ctre::phoenix6::swerve::requests
+
+class DutyCycleControl : public ctre::phoenix6::swerve::requests::SwerveRequest
 {
 
-    class DutyCycleControl : public SwerveRequest
+public:
+    double DutyCycle = 0;
+    // SwerveRequest::ControlParameters const &parameters, std::span<std::unique_ptr<impl::SwerveModuleImpl> const> modulesToApply
+    ctre::phoenix::StatusCode Apply(ctre::phoenix6::swerve::requests::SwerveRequest::ControlParameters const &parameters, std::span<std::unique_ptr<ctre::phoenix6::swerve::impl::SwerveModuleImpl> const> modulesToApply) override
     {
-
-    public:
-        double DutyCycle = 0;
-
-        ctre::phoenix::StatusCode Apply(SwerveRequest::ControlParameters const &parameters, std::vector<std::unique_ptr<impl::SwerveModuleImpl>> const &modulesToApply) override
+        for (size_t i = 0; i < modulesToApply.size(); ++i)
         {
-            for (size_t i = 0; i < modulesToApply.size(); ++i)
-            {
 
-                modulesToApply[i]->Apply(controls::DutyCycleOut{DutyCycle}, controls::PositionVoltage{0_deg});
-            }
-            return ctre::phoenix::StatusCode::OK;
+            modulesToApply[i]->Apply(controls::DutyCycleOut{DutyCycle}, controls::PositionVoltage{0_deg});
         }
+        return ctre::phoenix::StatusCode::OK;
+    }
 
-        DutyCycleControl &WithDutyCycle(double newDutyCycle) &
-        {
-            this->DutyCycle = std::move(newDutyCycle);
-            return *this;
-        }
-    };
+    DutyCycleControl &WithDutyCycle(double newDutyCycle) &
+    {
+        this->DutyCycle = std::move(newDutyCycle);
+        return *this;
+    }
+};
 
-}

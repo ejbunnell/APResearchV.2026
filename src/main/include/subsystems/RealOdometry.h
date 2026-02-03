@@ -26,7 +26,7 @@ public:
 
     double CalculateSlipRatio(units::radians_per_second_t omega)
     {
-        double radiusTimesOmega = (TunerConstants::kWheelRadius.convert<units::meters>() * omega).value();
+        double radiusTimesOmega = ((1.875_in).convert<units::meters>() * omega).value();
         return (radiusTimesOmega - velocity.value()) / radiusTimesOmega;
     }
 
@@ -37,7 +37,6 @@ public:
 
 private:
     ctre::phoenix6::hardware::CANrange canRange{1};
-    Limelight limelightLow{"limelight-low", LimelightConstants::kLowOffset};
     Limelight limelightHigh{"limelight-high", LimelightConstants::kHighOffset};
 
     std::function<frc::Rotation2d()> robotAngleFunction;
