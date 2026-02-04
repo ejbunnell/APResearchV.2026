@@ -36,6 +36,45 @@ public:
             return drivetrain.GetRotation3d().ToRotation2d();
         }};
 
+    Telemetry telemetry
+    {
+        [this] 
+        { 
+            return std::vector<frc::Pose2d>{realOdometry.GetPose(), drivetrain.GetState().Pose}; 
+        },
+        [this] 
+        { 
+            return std::vector<double>
+                {
+                    realOdometry.CalculatePercentError(drivetrain.GetState().Pose),
+                    drivetrain.GetAverageTorque().value(),
+                    drivetrain.GetAverageTorqueCurrent().value(),
+                    drivetrain.GetModuleKT(0).value(),
+                    realOdometry.CalculateSlipRatio(drivetrain.GetAverageOmega()),
+                    realOdometry.GetVelocity().value(),
+                    drivetrain.GetAverageOmega().value()
+                }; 
+        },
+        [this] 
+        {  
+            std::vector<std::vector<double>> data;
+            for (int i = 0; i < 4; i++)
+            {
+                data.push_back
+                (
+                    std::vector<double>
+                        {
+                            drivetrain.GetModuleTorque(i).value(),
+                            drivetrain.GetModuleTorqueCurrent(i).value(),
+                            drivetrain.GetModuleKT(i).value(),
+                            drivetrain.GetModuleOmega(i).value()
+                        }
+                );
+            }
+            return data;
+        }
+    };
+
     RobotContainer();
 
     frc2::CommandPtr GetAutonomousCommand();

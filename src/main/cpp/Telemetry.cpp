@@ -9,6 +9,8 @@ void Telemetry::Execute()
 {
     realOdometry.Set(odometrySupplier().at(0));
     wheelOdometry.Set(odometrySupplier().at(1));
+    realOdometryX.Set(odometrySupplier().at(0).X().value());
+    wheelOdometryX.Set(odometrySupplier().at(1).X().value());
 
     percentError.Set(robotDataSupplier().at(0));
     averageTorque.Set(robotDataSupplier().at(1));

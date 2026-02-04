@@ -32,7 +32,7 @@ private:
 class Telemetry : public frc2::CommandHelper<frc2::Command, Telemetry>
 {
 public:
-    Telemetry(std::function<std::vector<double>()> odometrySupplier,
+    explicit Telemetry(std::function<std::vector<frc::Pose2d>()> odometrySupplier,
         std::function<std::vector<double>()> robotDataSupplier,
         std::function<std::vector<std::vector<double>>()> moduleDataSupplier) 
     : odometrySupplier(odometrySupplier), robotDataSupplier(robotDataSupplier), moduleDataSupplier(moduleDataSupplier) {}
@@ -47,15 +47,18 @@ private:
         return nt::NetworkTableInstance::GetDefault().GetTable("AP Research Data");
     }
 
-    nt::DoublePublisher realOdometry = GetTable()->GetDoubleTopic("realOdometry (m)").Publish();
-    nt::DoublePublisher wheelOdometry = GetTable()->GetDoubleTopic("wheelOdometry (m)").Publish();
+    nt::DoublePublisher realOdometryX = GetTable()->GetDoubleTopic("realOdometryX (m)").Publish();
+    nt::DoublePublisher wheelOdometryX = GetTable()->GetDoubleTopic("wheelOdometryX (m)").Publish();
     nt::DoublePublisher percentError = GetTable()->GetDoubleTopic("percentError (%)").Publish();
     nt::DoublePublisher averageTorque = GetTable()->GetDoubleTopic("averageTorque (Nm)").Publish();
     nt::DoublePublisher averageTorqueCurrent = GetTable()->GetDoubleTopic("averageTorqueCurrent (A)").Publish();
-    nt::DoublePublisher kT = GetTable()->GetDoubleTopic("kT (Nm/A)").Publish();
+    nt::DoublePublisher kT = GetTable()->GetDoubleTopic("kT (Nm per A)").Publish();
     nt::DoublePublisher slipRatio = GetTable()->GetDoubleTopic("slipRatio").Publish();
-    nt::DoublePublisher robotVelocity = GetTable()->GetDoubleTopic("robotVelocity (m/s)").Publish();
-    nt::DoublePublisher averageWheelOmega = GetTable()->GetDoubleTopic("averageWheelOmega (rad/s)").Publish();
+    nt::DoublePublisher robotVelocity = GetTable()->GetDoubleTopic("robotVelocity (m per s)").Publish();
+    nt::DoublePublisher averageWheelOmega = GetTable()->GetDoubleTopic("averageWheelOmega (rad per s)").Publish();
+
+    nt::StructPublisher<frc::Pose2d> realOdometry = GetTable()->GetStructTopic<frc::Pose2d>("encoderPose").Publish();
+    nt::StructPublisher<frc::Pose2d> wheelOdometry = GetTable()->GetStructTopic<frc::Pose2d>("realPose").Publish();
     
     ModuleTelemetry frontLeft{"frontLeft"};
     ModuleTelemetry frontRight{"frontRight"};
@@ -67,7 +70,7 @@ private:
         &frontLeft, &frontRight, &backLeft, &backRight
     };
     
-    std::function<std::vector<double>()> odometrySupplier;
+    std::function<std::vector<frc::Pose2d>()> odometrySupplier;
     std::function<std::vector<double>()> robotDataSupplier;
     std::function<std::vector<std::vector<double>>()> moduleDataSupplier;
     

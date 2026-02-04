@@ -32,15 +32,15 @@ void RobotContainer::ConfigureBindings()
                                 { return swerve::requests::Idle{}; })
             .IgnoringDisable(true));
 
-    joystick.A().OnTrue(
+    joystick.A().WhileTrue(
         frc2::cmd::RunOnce([this](){ drivetrain.TareEverything(); }).AndThen(
         drivetrain.ApplyRequest([this]() -> auto &&
-                                { return dutyCycleControl.WithDutyCycle(testDutyCycle); })
+                                { return dutyCycleControl.WithDutyCycle(testDutyCycle); }).Repeatedly()
             .AlongWith(Telemetry
             {
                 [this] 
                 { 
-                    return std::vector<double>{realOdometry.GetPose().X().value(), drivetrain.GetState().Pose.X().value()}; 
+                    return std::vector<frc::Pose2d>{realOdometry.GetPose(), drivetrain.GetState().Pose}; 
                 },
                 [this] 
                 { 
@@ -74,14 +74,15 @@ void RobotContainer::ConfigureBindings()
                     return data;
                 }
 
-            }.ToPtr())));
+            }.ToPtr().Repeatedly())
+        ));
 
     // reset the field-centric heading on y button press
     joystick.Y().OnTrue(drivetrain.RunOnce([this]
                                            { drivetrain.SeedFieldCentric(); }));
 
-    joystick.LeftBumper().Debounce(40_ms).OnTrue(frc2::cmd::RunOnce(ctre::phoenix6::SignalLogger::Start));
-    joystick.RightBumper().Debounce(40_ms).OnTrue(frc2::cmd::RunOnce(ctre::phoenix6::SignalLogger::Stop));
+    // joystick.LeftBumper().Debounce(40_ms).OnTrue(frc2::cmd::RunOnce(ctre::phoenix6::SignalLogger::Start));
+    // joystick.RightBumper().Debounce(40_ms).OnTrue(frc2::cmd::RunOnce(ctre::phoenix6::SignalLogger::Stop));
 
 }
 

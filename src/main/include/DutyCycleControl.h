@@ -15,7 +15,6 @@ public:
     {
         for (size_t i = 0; i < modulesToApply.size(); ++i)
         {
-
             modulesToApply[i]->Apply(controls::DutyCycleOut{DutyCycle}, controls::PositionVoltage{0_deg});
         }
         return ctre::phoenix::StatusCode::OK;
