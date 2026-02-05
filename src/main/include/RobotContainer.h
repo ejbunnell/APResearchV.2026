@@ -22,8 +22,12 @@ private:
                                                .WithDeadband(MaxSpeed * 0.15)
                                                .WithRotationalDeadband(MaxAngularRate * 0.15)                    // Add a 15% deadband
                                                .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage); // Use open-loop control for drive motors
-
+    swerve::requests::RobotCentricFacingAngle driveAtAngle = swerve::requests::RobotCentricFacingAngle{}
+                                               .WithHeadingPID(0.5, 0, 1.5)
+                                               .WithDeadband(0_mps)                   // Add a 15% deadband
+                                               .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage); // Use open-loop control for drive motors
     DutyCycleControl dutyCycleControl{};
+    swerve::requests::PointWheelsAt pointWheelsAt{};
 
     frc2::CommandXboxController joystick{0};
 

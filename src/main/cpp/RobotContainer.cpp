@@ -33,7 +33,14 @@ void RobotContainer::ConfigureBindings()
             .IgnoringDisable(true));
 
     joystick.A().WhileTrue(
-        frc2::cmd::RunOnce([this](){ drivetrain.TareEverything(); }).AndThen(
+        frc2::cmd::RunOnce([this](){ drivetrain.TareEverything(); })
+        .AndThen(
+            drivetrain.ApplyRequest([this]
+            {
+                return pointWheelsAt.WithModuleDirection(frc::Rotation2d{180_deg});
+            })
+        ).Repeatedly().WithTimeout(1_s)
+        .AndThen(
         drivetrain.ApplyRequest([this]() -> auto &&
                                 { return dutyCycleControl.WithDutyCycle(testDutyCycle); }).Repeatedly()
             .AlongWith(Telemetry
