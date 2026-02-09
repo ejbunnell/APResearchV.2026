@@ -8,6 +8,7 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include "subsystems/CommandSwerveDrivetrain.h"
 #include "subsystems/RealOdometry.h"
+#include <frc/DataLogManager.h>
 #include "DutyCycleControl.h"
 #include "VelocityControl.h"
 #include "Telemetry.h"
@@ -94,7 +95,7 @@ public:
     frc2::CommandPtr GetAutonomousCommand();
 
 private:
-    double testDutyCycle = 1.0;
+    int testNumber = 1;
 
     void ConfigureBindings();
 };

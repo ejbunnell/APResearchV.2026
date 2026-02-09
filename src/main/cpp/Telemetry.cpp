@@ -32,6 +32,10 @@ void Telemetry::Periodic()
 ModuleTelemetry::ModuleTelemetry(std::string name)
 {
     this->name = name;
+    torque = GetTable()->GetDoubleTopic("torque (Nm)").Publish();
+    torqueCurrent = GetTable()->GetDoubleTopic("torqueCurrent (A)").Publish();
+    kT = GetTable()->GetDoubleTopic("kT (Nm per A)").Publish();
+    wheelOmega = GetTable()->GetDoubleTopic("wheelOmega (rad per s)").Publish();
 }
 
 void ModuleTelemetry::PublishTorque(double torque)

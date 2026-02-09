@@ -33,7 +33,12 @@ void RobotContainer::ConfigureBindings()
             .IgnoringDisable(true));
 
     joystick.A().WhileTrue(
-        frc2::cmd::RunOnce([this](){ drivetrain.TareEverything(); ctre::phoenix6::SignalLogger::Start(); })
+        frc2::cmd::RunOnce([this]()
+        { 
+            drivetrain.TareEverything();
+            drivetrain.ResetRotation(frc::Rotation2d{180_deg});
+            frc::DataLogManager::Start();
+        })
         .AndThen(
             drivetrain.ApplyRequest([this]
             {
@@ -42,9 +47,11 @@ void RobotContainer::ConfigureBindings()
         ).Repeatedly().WithTimeout(1_s)
         .AndThen(
         drivetrain.ApplyRequest([this]() -> auto &&
-                                { return velocityControl.WithVelocity(100_tps); }).Repeatedly()
-        ).FinallyDo([this] {ctre::phoenix6::SignalLogger::Stop();}));
+                                { return velocityControl.WithVelocity(6000_rad_per_s); }).Repeatedly()
+        ).FinallyDo([this] {frc::DataLogManager::Stop();;}));
 
+
+  
     // reset the field-centric heading on y button press
     joystick.Y().OnTrue(drivetrain.RunOnce([this]
                                            { drivetrain.SeedFieldCentric(); }));

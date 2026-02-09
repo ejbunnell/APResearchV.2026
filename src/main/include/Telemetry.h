@@ -18,12 +18,12 @@ private:
     std::string name;
     std::shared_ptr<nt::NetworkTable> GetTable()
     {
-        return nt::NetworkTableInstance::GetDefault().GetTable("AP Research Data")->GetSubTable(name);
+        return nt::NetworkTableInstance::GetDefault().GetTable("AP Research Data/" + name);
     }
-    nt::DoublePublisher torque = GetTable()->GetDoubleTopic("torque (Nm)").Publish();
-    nt::DoublePublisher torqueCurrent = GetTable()->GetDoubleTopic("torqueCurrent (A)").Publish();
-    nt::DoublePublisher kT = GetTable()->GetDoubleTopic("kT (Nm/A)").Publish();
-    nt::DoublePublisher wheelOmega = GetTable()->GetDoubleTopic("wheelOmega (rad/s)").Publish();
+    nt::DoublePublisher torque; // = GetTable()->GetDoubleTopic("torque (Nm)").Publish();
+    nt::DoublePublisher torqueCurrent; // = GetTable()->GetDoubleTopic("torqueCurrent (A)").Publish();
+    nt::DoublePublisher kT; // = GetTable()->GetDoubleTopic("kT (Nm per A)").Publish();
+    nt::DoublePublisher wheelOmega; // = GetTable()->GetDoubleTopic("wheelOmega (rad per s)").Publish();
 };
 
 class Telemetry : public frc2::SubsystemBase
