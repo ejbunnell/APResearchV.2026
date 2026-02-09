@@ -33,56 +33,17 @@ void RobotContainer::ConfigureBindings()
             .IgnoringDisable(true));
 
     joystick.A().WhileTrue(
-        frc2::cmd::RunOnce([this](){ drivetrain.TareEverything(); })
+        frc2::cmd::RunOnce([this](){ drivetrain.TareEverything(); ctre::phoenix6::SignalLogger::Start(); })
         .AndThen(
             drivetrain.ApplyRequest([this]
             {
-                return pointWheelsAt.WithModuleDirection(frc::Rotation2d{180_deg});
+                return velocityControl.WithVelocity(0_tps);
             })
         ).Repeatedly().WithTimeout(1_s)
         .AndThen(
         drivetrain.ApplyRequest([this]() -> auto &&
-                                { return dutyCycleControl.WithDutyCycle(testDutyCycle); }).Repeatedly()
-            .AlongWith(Telemetry
-            {
-                [this] 
-                { 
-                    return std::vector<frc::Pose2d>{realOdometry.GetPose(), drivetrain.GetState().Pose}; 
-                },
-                [this] 
-                { 
-                    return std::vector<double>
-                        {
-                            realOdometry.CalculatePercentError(drivetrain.GetState().Pose),
-                            drivetrain.GetAverageTorque().value(),
-                            drivetrain.GetAverageTorqueCurrent().value(),
-                            drivetrain.GetModuleKT(0).value(),
-                            realOdometry.CalculateSlipRatio(drivetrain.GetAverageOmega()),
-                            realOdometry.GetVelocity().value(),
-                            drivetrain.GetAverageOmega().value()
-                        }; 
-                },
-                [this] 
-                {  
-                    std::vector<std::vector<double>> data;
-                    for (int i = 0; i < 4; i++)
-                    {
-                        data.push_back
-                        (
-                            std::vector<double>
-                                {
-                                    drivetrain.GetModuleTorque(i).value(),
-                                    drivetrain.GetModuleTorqueCurrent(i).value(),
-                                    drivetrain.GetModuleKT(i).value(),
-                                    drivetrain.GetModuleOmega(i).value()
-                                }
-                        );
-                    }
-                    return data;
-                }
-
-            }.ToPtr().Repeatedly())
-        ));
+                                { return velocityControl.WithVelocity(100_tps); }).Repeatedly()
+        ).FinallyDo([this] {ctre::phoenix6::SignalLogger::Stop();}));
 
     // reset the field-centric heading on y button press
     joystick.Y().OnTrue(drivetrain.RunOnce([this]

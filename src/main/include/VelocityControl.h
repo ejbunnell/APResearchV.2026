@@ -5,24 +5,23 @@
 #include <ctre/phoenix6/TalonFX.hpp>
 
 
-class DutyCycleControl : public ctre::phoenix6::swerve::requests::SwerveRequest
+class VelocityControl : public ctre::phoenix6::swerve::requests::SwerveRequest
 {
 
 public:
-    double DutyCycle = 0;
-    // SwerveRequest::ControlParameters const &parameters, std::span<std::unique_ptr<impl::SwerveModuleImpl> const> modulesToApply
+    units::turns_per_second_t Velocity{0};
     ctre::phoenix::StatusCode Apply(ctre::phoenix6::swerve::requests::SwerveRequest::ControlParameters const &parameters, std::span<std::unique_ptr<ctre::phoenix6::swerve::impl::SwerveModuleImpl> const> modulesToApply) override
     {
         for (size_t i = 0; i < modulesToApply.size(); ++i)
         {
-            modulesToApply[i]->Apply(ctre::phoenix6::controls::DutyCycleOut{DutyCycle}, ctre::phoenix6::controls::PositionVoltage{180_deg});
+            modulesToApply[i]->Apply(ctre::phoenix6::controls::VelocityVoltage{Velocity}, ctre::phoenix6::controls::PositionVoltage{180_deg});
         }
         return ctre::phoenix::StatusCode::OK;
     }
 
-    DutyCycleControl &WithDutyCycle(double newDutyCycle) &
+    VelocityControl &WithVelocity(units::turns_per_second_t newVelocity) &
     {
-        this->DutyCycle = std::move(newDutyCycle);
+        this->Velocity = std::move(newVelocity);
         return *this;
     }
 };

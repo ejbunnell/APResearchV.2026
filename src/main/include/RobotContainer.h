@@ -9,6 +9,7 @@
 #include "subsystems/CommandSwerveDrivetrain.h"
 #include "subsystems/RealOdometry.h"
 #include "DutyCycleControl.h"
+#include "VelocityControl.h"
 #include "Telemetry.h"
 
 class RobotContainer
@@ -27,6 +28,7 @@ private:
                                                .WithDeadband(0_mps)                   // Add a 15% deadband
                                                .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage); // Use open-loop control for drive motors
     DutyCycleControl dutyCycleControl{};
+    VelocityControl velocityControl{};
     swerve::requests::PointWheelsAt pointWheelsAt{};
 
     frc2::CommandXboxController joystick{0};
@@ -76,6 +78,14 @@ public:
                 );
             }
             return data;
+        },
+        [this]
+        {
+            return std::vector<std::vector<frc::SwerveModuleState>>
+                {
+                    drivetrain.GetState().ModuleStates,
+                    drivetrain.GetState().ModuleTargets
+                };
         }
     };
 

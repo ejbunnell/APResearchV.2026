@@ -1,13 +1,10 @@
 #pragma once
 
 #include <functional>
-
-#include <frc2/command/Command.h>
-#include <frc2/command/CommandHelper.h>
+#include <frc/kinematics/SwerveModuleState.h>
+#include <frc2/command/SubsystemBase.h>
 
 #include "Includes.h"
-
-#include <ctre/phoenix6/SignalLogger.hpp>
 
 class ModuleTelemetry
 {
@@ -29,17 +26,16 @@ private:
     nt::DoublePublisher wheelOmega = GetTable()->GetDoubleTopic("wheelOmega (rad/s)").Publish();
 };
 
-class Telemetry : public frc2::CommandHelper<frc2::Command, Telemetry>
+class Telemetry : public frc2::SubsystemBase
 {
 public:
-    explicit Telemetry(std::function<std::vector<frc::Pose2d>()> odometrySupplier,
+    Telemetry(std::function<std::vector<frc::Pose2d>()> odometrySupplier,
         std::function<std::vector<double>()> robotDataSupplier,
-        std::function<std::vector<std::vector<double>>()> moduleDataSupplier) 
-    : odometrySupplier(odometrySupplier), robotDataSupplier(robotDataSupplier), moduleDataSupplier(moduleDataSupplier) {}
+        std::function<std::vector<std::vector<double>>()> moduleDataSupplier,
+        std::function<std::vector<std::vector<frc::SwerveModuleState>>()> statesSupplier) 
+    : odometrySupplier(odometrySupplier), robotDataSupplier(robotDataSupplier), moduleDataSupplier(moduleDataSupplier), statesSupplier(statesSupplier) {}
 
-    void Initialize() override;
-    void Execute() override;
-    bool IsFinished() override;
+    void Periodic() override;
 
 private:
     std::shared_ptr<nt::NetworkTable> GetTable()
@@ -48,7 +44,7 @@ private:
     }
 
     nt::DoublePublisher realOdometryX = GetTable()->GetDoubleTopic("realOdometryX (m)").Publish();
-    nt::DoublePublisher wheelOdometryX = GetTable()->GetDoubleTopic("wheelOdometryX (m)").Publish();
+    nt::DoublePublisher encoderOdometryX = GetTable()->GetDoubleTopic("encoderOdometryX (m)").Publish();
     nt::DoublePublisher percentError = GetTable()->GetDoubleTopic("percentError (%)").Publish();
     nt::DoublePublisher averageTorque = GetTable()->GetDoubleTopic("averageTorque (Nm)").Publish();
     nt::DoublePublisher averageTorqueCurrent = GetTable()->GetDoubleTopic("averageTorqueCurrent (A)").Publish();
@@ -57,8 +53,11 @@ private:
     nt::DoublePublisher robotVelocity = GetTable()->GetDoubleTopic("robotVelocity (m per s)").Publish();
     nt::DoublePublisher averageWheelOmega = GetTable()->GetDoubleTopic("averageWheelOmega (rad per s)").Publish();
 
-    nt::StructPublisher<frc::Pose2d> realOdometry = GetTable()->GetStructTopic<frc::Pose2d>("encoderPose").Publish();
-    nt::StructPublisher<frc::Pose2d> wheelOdometry = GetTable()->GetStructTopic<frc::Pose2d>("realPose").Publish();
+    nt::StructPublisher<frc::Pose2d> realOdometry = GetTable()->GetStructTopic<frc::Pose2d>("realPose").Publish();
+    nt::StructPublisher<frc::Pose2d> encoderOdometry = GetTable()->GetStructTopic<frc::Pose2d>("encoderPose").Publish();
+
+    nt::StructArrayPublisher<frc::SwerveModuleState> swerveState = nt::NetworkTableInstance::GetDefault().GetTable("Swerve")->GetStructArrayTopic<frc::SwerveModuleState>("state").Publish();
+    nt::StructArrayPublisher<frc::SwerveModuleState> swerveGoal = nt::NetworkTableInstance::GetDefault().GetTable("Swerve")->GetStructArrayTopic<frc::SwerveModuleState>("goal").Publish();
     
     ModuleTelemetry frontLeft{"frontLeft"};
     ModuleTelemetry frontRight{"frontRight"};
@@ -73,5 +72,7 @@ private:
     std::function<std::vector<frc::Pose2d>()> odometrySupplier;
     std::function<std::vector<double>()> robotDataSupplier;
     std::function<std::vector<std::vector<double>>()> moduleDataSupplier;
+    std::function<std::vector<std::vector<frc::SwerveModuleState>>()> statesSupplier;
+    
     
 };

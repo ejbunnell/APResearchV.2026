@@ -17,12 +17,12 @@ void RealOdometry::Periodic()
     odometry.UpdateWithTime(
         frc::Timer::GetFPGATimestamp(),
         robotAngle,
-        {frc::SwerveModulePosition(), frc::SwerveModulePosition(), frc::SwerveModulePosition(), frc::SwerveModulePosition()});
+        {frc::SwerveModulePosition{}, frc::SwerveModulePosition{}, frc::SwerveModulePosition{}, frc::SwerveModulePosition{}});
 
     PoseEstimate highPose = limelightHigh.GetPose(robotAngle.Degrees(), 0_rad_per_s);
     odometry.AddVisionMeasurement(highPose.pose, highPose.timestampSeconds);
     odometry.SetVisionMeasurementStdDevs(wpi::array<double, 3>{0.01, 9999.0, 9999.0});
-    if (canRange.GetMeasurementHealth().GetValue() == ctre::phoenix6::signals::MeasurementHealthValue::Good)
+    if (canRange.GetDistance().GetValue() < 3_m)
     {
         odometry.AddVisionMeasurement(frc::Pose2d{frc::Translation2d{26.625_ft - canRange.GetDistance().GetValue() - 11.25_in, odometry.GetEstimatedPosition().Y()}, robotAngle}, frc::Timer::GetFPGATimestamp());
     }
