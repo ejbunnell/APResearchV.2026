@@ -1,16 +1,11 @@
 #include "Telemetry.h"
 
-void Telemetry::Initialize()
-{
-    ctre::phoenix6::SignalLogger::Start();
-}
-
-void Telemetry::Execute()
+void Telemetry::Periodic()
 {
     realOdometry.Set(odometrySupplier().at(0));
-    wheelOdometry.Set(odometrySupplier().at(1));
+    encoderOdometry.Set(odometrySupplier().at(1));
     realOdometryX.Set(odometrySupplier().at(0).X().value());
-    wheelOdometryX.Set(odometrySupplier().at(1).X().value());
+    encoderOdometryX.Set(odometrySupplier().at(1).X().value());
 
     percentError.Set(robotDataSupplier().at(0));
     averageTorque.Set(robotDataSupplier().at(1));
@@ -29,17 +24,18 @@ void Telemetry::Execute()
         module->PublishKT(data.at(2));
         module->PublishWheelOmega(data.at(3));
     }
-}
 
-bool Telemetry::IsFinished()
-{
-    ctre::phoenix6::SignalLogger::Stop();
-    return true;
+    swerveState.Set(statesSupplier().at(0));
+    swerveGoal.Set(statesSupplier().at(1));
 }
 
 ModuleTelemetry::ModuleTelemetry(std::string name)
 {
     this->name = name;
+    torque = GetTable()->GetDoubleTopic("torque (Nm)").Publish();
+    torqueCurrent = GetTable()->GetDoubleTopic("torqueCurrent (A)").Publish();
+    kT = GetTable()->GetDoubleTopic("kT (Nm per A)").Publish();
+    wheelOmega = GetTable()->GetDoubleTopic("wheelOmega (rad per s)").Publish();
 }
 
 void ModuleTelemetry::PublishTorque(double torque)
