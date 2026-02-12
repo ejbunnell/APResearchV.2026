@@ -163,7 +163,7 @@ private:
     static constexpr int kBackRightDriveMotorId = 7;
     static constexpr int kBackRightSteerMotorId = 8;
     static constexpr int kBackRightEncoderId = 4;
-    static constexpr units::turn_t kBackRightEncoderOffset = -0.25_tr;
+    static constexpr units::turn_t kBackRightEncoderOffset = -0.75_tr;
     static constexpr bool kBackRightSteerMotorInverted = true;
     static constexpr bool kBackRightEncoderInverted = false;
 

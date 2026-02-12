@@ -37,7 +37,7 @@ public:
 
 private:
     ctre::phoenix6::hardware::CANrange canRange{1};
-    Limelight limelightHigh{"limelight-high", LimelightConstants::kHighOffset};
+    Limelight limelightHigh{"limelight", {-10.375_in, 1.325_in, 6_in, frc::Rotation3d{-90_deg, 6_deg, 180_deg}}};
 
     std::function<frc::Rotation2d()> robotAngleFunction;
 
