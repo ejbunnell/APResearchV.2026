@@ -50,7 +50,7 @@ void RobotContainer::ConfigureBindings()
         ).Repeatedly().WithTimeout(0.5_s)
         .AndThen(
         drivetrain.ApplyRequest([this]() -> auto &&
-                                { return velocityControl.WithVelocity(600_rad_per_s); })
+                                { return velocityControl.WithVelocity(600_rad_per_s); }).WithTimeout(collisionTest ? 0.3_s : 0.5_s)
         )
         
     );

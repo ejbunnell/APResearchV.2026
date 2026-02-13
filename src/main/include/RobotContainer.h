@@ -97,6 +97,7 @@ public:
 
 private:
     int trial = 1;
+    bool collisionTest = true;
 
     void ConfigureBindings();
 };
