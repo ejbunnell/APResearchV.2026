@@ -20,11 +20,13 @@ void RealOdometry::Periodic()
         {frc::SwerveModulePosition{}, frc::SwerveModulePosition{}, frc::SwerveModulePosition{}, frc::SwerveModulePosition{}});
 
     PoseEstimate highPose = limelightHigh.GetPose(robotAngle.Degrees(), 0_rad_per_s);
-    odometry.AddVisionMeasurement(highPose.pose, highPose.timestampSeconds);
+    odometry.SetVisionMeasurementStdDevs(wpi::array<double, 3>{0.5, 9999.0, 9999.0});
+    if (highPose.tagCount > 1) odometry.AddVisionMeasurement(highPose.pose, frc::Timer::GetFPGATimestamp() - units::millisecond_t{highPose.latency});
+    // if (highPose.tagCount > 1) odometry.AddVisionMeasurement(highPose.pose, frc::Timer::GetFPGATimestamp());
     odometry.SetVisionMeasurementStdDevs(wpi::array<double, 3>{0.01, 9999.0, 9999.0});
-    if (canRange.GetDistance().GetValue() < 3_m)
+    if (canRange.GetDistance().GetValue() < 1_m && canRange.GetMeasurementHealth().GetValue() == ctre::phoenix6::signals::MeasurementHealthValue::Good)
     {
-        odometry.AddVisionMeasurement(frc::Pose2d{frc::Translation2d{26.625_ft - canRange.GetDistance().GetValue() - 11.25_in, odometry.GetEstimatedPosition().Y()}, robotAngle}, frc::Timer::GetFPGATimestamp());
+        // odometry.AddVisionMeasurement(frc::Pose2d{frc::Translation2d{26.625_ft - canRange.GetDistance().GetValue() - 11.25_in, 0_m}, robotAngle}, frc::Timer::GetFPGATimestamp());
     }
 
     units::meter_t currentPosition = odometry.GetEstimatedPosition().X();

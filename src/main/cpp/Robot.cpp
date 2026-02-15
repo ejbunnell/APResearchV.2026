@@ -24,6 +24,7 @@ void Robot::DisabledExit() {}
 
 void Robot::AutonomousInit()
 {
+	
 }
 
 void Robot::AutonomousPeriodic() {}

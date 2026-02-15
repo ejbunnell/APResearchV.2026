@@ -32,23 +32,29 @@ void RobotContainer::ConfigureBindings()
                                 { return swerve::requests::Idle{}; })
             .IgnoringDisable(true));
 
+    
     joystick.A().WhileTrue(
         frc2::cmd::RunOnce([this]()
         { 
             drivetrain.TareEverything();
-            drivetrain.ResetRotation(frc::Rotation2d{180_deg});
+            drivetrain.ResetPose(realOdometry.GetPose());
             frc::DataLogManager::Start();
+            frc::SmartDashboard::PutNumber("AP Research Data/trialNumber", trial);
+            trial++;
         })
         .AndThen(
             drivetrain.ApplyRequest([this]
             {
                 return velocityControl.WithVelocity(0_tps);
             })
-        ).Repeatedly().WithTimeout(1_s)
+        ).Repeatedly().WithTimeout(0.5_s)
         .AndThen(
         drivetrain.ApplyRequest([this]() -> auto &&
-                                { return velocityControl.WithVelocity(6000_rad_per_s); }).Repeatedly()
-        ).FinallyDo([this] {frc::DataLogManager::Stop();;}));
+                                { return velocityControl.WithVelocity(600_rad_per_s); }).WithTimeout(collisionTest ? 0.3_s : 0.5_s)
+        )
+        
+    );
+    // joystick.A().OnFalse(frc2::cmd::RunOnce([this]{frc::DataLogManager::Stop(); }).BeforeStarting(frc2::cmd::Run([this]{}).WithTimeout(1_s)));
 
 
   
