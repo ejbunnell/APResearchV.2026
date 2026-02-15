@@ -30,6 +30,7 @@ private:
                                                .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage); // Use open-loop control for drive motors
     DutyCycleControl dutyCycleControl{};
     VelocityControl velocityControl{};
+    swerve::requests::SwerveDriveBrake brake{};
     swerve::requests::PointWheelsAt pointWheelsAt{};
 
     frc2::CommandXboxController joystick{0};
@@ -40,7 +41,7 @@ public:
     RealOdometry realOdometry{
         [this]()
         {
-            return drivetrain.GetRotation3d().ToRotation2d();
+            return drivetrain.GetState().Pose.Rotation();
         }};
 
     Telemetry telemetry
@@ -95,7 +96,8 @@ public:
     frc2::CommandPtr GetAutonomousCommand();
 
 private:
-    int testNumber = 1;
+    int trial = 1;
+    bool collisionTest = true;
 
     void ConfigureBindings();
 };
