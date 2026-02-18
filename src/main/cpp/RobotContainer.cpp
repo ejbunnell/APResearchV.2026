@@ -54,16 +54,10 @@ void RobotContainer::ConfigureBindings()
         )
         
     );
-    // joystick.A().OnFalse(frc2::cmd::RunOnce([this]{frc::DataLogManager::Stop(); }).BeforeStarting(frc2::cmd::Run([this]{}).WithTimeout(1_s)));
-
-
   
     // reset the field-centric heading on y button press
     joystick.Y().OnTrue(drivetrain.RunOnce([this]
                                            { drivetrain.SeedFieldCentric(); }));
-
-    // joystick.LeftBumper().Debounce(40_ms).OnTrue(frc2::cmd::RunOnce(ctre::phoenix6::SignalLogger::Start));
-    // joystick.RightBumper().Debounce(40_ms).OnTrue(frc2::cmd::RunOnce(ctre::phoenix6::SignalLogger::Stop));
 
 }
 

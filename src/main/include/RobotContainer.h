@@ -9,7 +9,6 @@
 #include "subsystems/CommandSwerveDrivetrain.h"
 #include "subsystems/RealOdometry.h"
 #include <frc/DataLogManager.h>
-#include "DutyCycleControl.h"
 #include "VelocityControl.h"
 #include "Telemetry.h"
 
@@ -24,14 +23,7 @@ private:
                                                .WithDeadband(MaxSpeed * 0.15)
                                                .WithRotationalDeadband(MaxAngularRate * 0.15)                    // Add a 15% deadband
                                                .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage); // Use open-loop control for drive motors
-    swerve::requests::RobotCentricFacingAngle driveAtAngle = swerve::requests::RobotCentricFacingAngle{}
-                                               .WithHeadingPID(0.5, 0, 1.5)
-                                               .WithDeadband(0_mps)                   // Add a 15% deadband
-                                               .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage); // Use open-loop control for drive motors
-    DutyCycleControl dutyCycleControl{};
     VelocityControl velocityControl{};
-    swerve::requests::SwerveDriveBrake brake{};
-    swerve::requests::PointWheelsAt pointWheelsAt{};
 
     frc2::CommandXboxController joystick{0};
 
@@ -97,7 +89,7 @@ public:
 
 private:
     int trial = 1;
-    bool collisionTest = true;
+    bool collisionTest = true; // change this when doing the two different types of tests
 
     void ConfigureBindings();
 };

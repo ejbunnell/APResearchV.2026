@@ -24,7 +24,6 @@ void RealOdometry::Periodic()
     PoseEstimate highPose = limelightHigh.GetPose(robotAngle.Degrees(), 0_rad_per_s);
     odometry.SetVisionMeasurementStdDevs(wpi::array<double, 3>{0.5, 9999.0, 9999.0});
     if (highPose.tagCount > 1) odometry.AddVisionMeasurement(highPose.pose, ctre::phoenix6::utils::GetCurrentTime());
-    // if (highPose.tagCount > 1) odometry.AddVisionMeasurement(highPose.pose, frc::Timer::GetFPGATimestamp());
     units::meter_t rangeStdDev = canRange.GetDistanceStdDev().GetValue();
     odometry.SetVisionMeasurementStdDevs(wpi::array<double, 3>{0.2 + rangeStdDev.value() * 2, 0.0, 9999.0});
     if (rangeStdDev < 0.2_m)

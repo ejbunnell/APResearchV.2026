@@ -32,5 +32,5 @@ public:
 private:
   RobotContainer m_container;
 
-  bool tractionControl = true;
+  bool tractionControl = true; // change this to determine whether or not to add traction control
 };
